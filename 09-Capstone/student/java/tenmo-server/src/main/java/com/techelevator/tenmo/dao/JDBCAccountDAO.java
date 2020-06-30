@@ -1,5 +1,7 @@
 package com.techelevator.tenmo.dao;
 
+import java.math.BigDecimal;
+
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,6 +28,21 @@ public class JDBCAccountDAO implements AccountDAO {
 		
 		return account;
 	}
+	
+	@Override
+	public Account updateAccountBalance(int userId, BigDecimal amount) {
+		
+		Account account = getAccountByUserId(userId);
+		account.setBalance(account.getBalance().add(amount));
+		String sql = "UPDATE accounts "
+					+ "SET balance = ? "
+					+ "WHERE user_id = ?";
+		jdbc.update(sql, account.getBalance(), account.getUserId());
+		
+		return account;		
+	}
+	
+	
 	
 	private Account mapRowToAccount(SqlRowSet results) {
 		Account account = new Account();
