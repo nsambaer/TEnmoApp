@@ -65,6 +65,11 @@ public class Transfer {
 		return output;
 	}
 	
+	@Override
+	public String toString() {
+		return " ID: " + transferId + "\n From: " + accountFrom + "\n To: " + accountTo + "\n Type: " + transferType + "\n Status: " + transferStatus
+				+ "\n Amount: $" + amount;
+	}
 	
 	
 	

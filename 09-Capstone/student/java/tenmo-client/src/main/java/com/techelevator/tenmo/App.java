@@ -90,7 +90,16 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		}
 		System.out.println("----------");
 		int transferChoice = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel)");
-		
+		if (transferChoice > 0) {
+			for (Transfer t: transferHistory) {
+				if (t.getTransferId() == transferChoice) {
+					System.out.println("------------------------------------------");
+					System.out.println("Transfer Details");
+					System.out.println("------------------------------------------");
+					System.out.println(t);
+				}
+			}
+		}
 	}
 
 	private void viewPendingRequests() {
