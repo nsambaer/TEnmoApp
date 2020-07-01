@@ -7,21 +7,21 @@ public class Transfer {
 	private int transferId;
 	private String transferType;
 	private String transferStatus;
-	private int accountFromId;
-	private int accountToId;
+	private String accountFrom;
+	private String accountTo;
 	private BigDecimal amount;
 
 	public Transfer() {
 
 	}
 
-	public Transfer(int transferId, String transferType, String transferStatus, int accountFromId, int accountToId,
+	public Transfer(int transferId, String transferType, String transferStatus, String accountFrom, String accountTo,
 			BigDecimal amount) {
 		this.transferId = transferId;
 		this.transferType = transferType;
 		this.transferStatus = transferStatus;
-		this.accountFromId = accountFromId;
-		this.accountToId = accountToId;
+		this.accountFrom = accountFrom;
+		this.accountTo = accountTo;
 		this.amount = amount;
 	}
 
@@ -49,20 +49,20 @@ public class Transfer {
 		this.transferStatus = transferStatus;
 	}
 
-	public int getAccountFromId() {
-		return accountFromId;
+	public String getAccountFrom() {
+		return accountFrom;
 	}
 
-	public void setAccountFromId(int accountFromId) {
-		this.accountFromId = accountFromId;
+	public void setAccountFrom(String accountFrom) {
+		this.accountFrom = accountFrom;
 	}
 
-	public int getAccountToId() {
-		return accountToId;
+	public String getAccountTo() {
+		return accountTo;
 	}
 
-	public void setAccountToId(int accountToId) {
-		this.accountToId = accountToId;
+	public void setAccountTo(String accountTo) {
+		this.accountTo = accountTo;
 	}
 
 	public BigDecimal getAmount() {

@@ -8,7 +8,7 @@ public interface AccountDAO {
 	
 	public Account getAccountByUserId(int userId);
 
-	public Account updateAccountBalance(int userId, BigDecimal amount);
+	public Account updateAccountBalance(String username, BigDecimal amount);
 	
 	//public Account getAccountByAccountId(int accountId);
 

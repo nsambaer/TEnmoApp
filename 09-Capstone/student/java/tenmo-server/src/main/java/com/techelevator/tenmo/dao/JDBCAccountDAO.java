@@ -14,8 +14,11 @@ import com.techelevator.tenmo.model.Account;
 public class JDBCAccountDAO implements AccountDAO {
 
 	private JdbcTemplate jdbc;
-	public JDBCAccountDAO(DataSource dataSource) {
+	private UserDAO uDAO;
+	
+	public JDBCAccountDAO(DataSource dataSource, UserDAO userDAO) {
 		this.jdbc = new JdbcTemplate(dataSource);
+		this.uDAO = userDAO;
 	}
 	
 	@Override
@@ -32,16 +35,16 @@ public class JDBCAccountDAO implements AccountDAO {
 	}
 	
 	@Override
-	public Account updateAccountBalance(int userId, BigDecimal amount) {
+	public Account updateAccountBalance(String username, BigDecimal amount) {
 		
-		Account account = getAccountByUserId(userId);
+		Account account = getAccountByUserId(uDAO.findIdByUsername(username));
 		account.setBalance(account.getBalance().add(amount));
 		String sql = "UPDATE accounts "
 					+ "SET balance = ? "
 					+ "WHERE user_id = ?";
-		jdbc.update(sql, account.getBalance(), account.getUserId());
+		jdbc.update(sql, account.getBalance(), account.getAccountId());
 		
-		return account;		
+		return account;
 	}
 	
 	

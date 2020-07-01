@@ -1,6 +1,7 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.models.AuthenticatedUser;
+import com.techelevator.tenmo.models.Transfer;
 import com.techelevator.tenmo.models.UserCredentials;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.AuthenticationServiceException;
@@ -28,6 +29,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
     private AuthenticationService authenticationService;
     private TenmoService tenmoService;
     private int currentUserId;
+    private String currentUsername;
 
     public static void main(String[] args) {
     	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL), new TenmoService(API_BASE_URL));
@@ -72,12 +74,22 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void viewCurrentBalance() {
-		System.out.println("Your current balance is: " + tenmoService.viewCurrentBalance(currentUserId));
-		
+		System.out.println("------------------------------------------");
+		System.out.println("Your current balance is: " + tenmoService.listCurrentBalance(currentUserId));
+		System.out.println("------------------------------------------");
 	}
 
 	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
+		Transfer[] transferHistory = tenmoService.listTransferHistory(currentUserId);
+		System.out.println("------------------------------------------");
+		System.out.println("Transfers");
+		System.out.println("ID        From/To                Amount");
+		System.out.println("------------------------------------------");
+		for (Transfer t: transferHistory) {
+			System.out.println(t.listOverview(currentUsername));
+		}
+		System.out.println("----------");
+		int transferChoice = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel)");
 		
 	}
 
@@ -145,6 +157,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 				currentUser = authenticationService.login(credentials);
 				tenmoService.AUTH_TOKEN = currentUser.getToken();
 				currentUserId = currentUser.getUser().getId();
+				currentUsername = currentUser.getUser().getUsername();
 			} catch (AuthenticationServiceException e) {
 				System.out.println("LOGIN ERROR: "+e.getMessage());
 				System.out.println("Please attempt to login again.");

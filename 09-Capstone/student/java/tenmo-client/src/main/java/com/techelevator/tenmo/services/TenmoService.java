@@ -20,17 +20,25 @@ public class TenmoService {
 	public TenmoService(String BASE_URL) {
 		this.BASE_URL = BASE_URL;
 	}
-	
-	
-	public Account viewCurrentBalance(int userId) {
+
+	public Account listCurrentBalance(int userId) {
 		Account account = null;
-	
-			account = restTemplate.exchange(BASE_URL + "account/" + userId, HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
-			
-			return account;		
+
+		account = restTemplate.exchange(BASE_URL + "account/" + userId, HttpMethod.GET, makeAuthEntity(), Account.class)
+				.getBody();
+
+		return account;
 	}
 
-	
+	public Transfer[] listTransferHistory(int userId) {
+		Transfer[] transferHistory = null;
+
+		transferHistory = restTemplate.exchange(BASE_URL + "account/" + userId + "/transfers", HttpMethod.GET,
+				makeAuthEntity(), Transfer[].class).getBody();
+
+		return transferHistory;
+	}
+
 	private HttpEntity<Transfer> makeTransferEntity(Transfer transfer) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);

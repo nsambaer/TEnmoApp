@@ -46,8 +46,8 @@ public class TenmoController {
 	@RequestMapping(path = "/account/{userId}/transfers", method = RequestMethod.POST)
 	public Transfer makeTransfer(@Valid @RequestBody Transfer transfer) {		
 		
-		aDAO.updateAccountBalance(transfer.getAccountFromId(), transfer.getAmount().negate());
-		aDAO.updateAccountBalance(transfer.getAccountToId(), transfer.getAmount());
+		aDAO.updateAccountBalance(transfer.getAccountFrom(), transfer.getAmount().negate());
+		aDAO.updateAccountBalance(transfer.getAccountTo(), transfer.getAmount());
 		return tDAO.createTransfer(transfer);
 	}
 	

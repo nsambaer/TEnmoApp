@@ -29,8 +29,10 @@ public class UserSqlDAO implements UserDAO {
         return jdbcTemplate.queryForObject("select user_id from users where username = ?", int.class, username);
     }
 
-    @Override
-    public List<User> findAllUsersSanitized() {
+    @Override 
+    //this will only select information that is safe to send out to the client when it requests a user list. 
+    //Otherwise the password hash and user roles will be transmitted over the "web" :(
+    public List<User> findAllUsersSanitized() { 
     	List<User> users = new ArrayList<>();
     	String sql = "SELECT user_id, username FROM users";
     	
@@ -100,6 +102,8 @@ public class UserSqlDAO implements UserDAO {
                 
         user.setId(rs.getLong("user_id"));
         user.setUsername(rs.getString("username"));
+        //checking columns returned by rowset. if only 2 columns are returned then that means the sanitized method was called
+    	//and password_hash and ROLE_USER will throw exceptions
         if (metaData.getColumnCount() > 2) {
         user.setPassword(rs.getString("password_hash"));
         user.setActivated(true);
