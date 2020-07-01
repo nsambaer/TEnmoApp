@@ -56,9 +56,9 @@ public class Transfer {
 	public String listOverview(String username) {
 		String output = transferId + "        ";
 		if (username.equals(accountFrom)) {
-			output += "From: " + accountFrom;
-		} else {
 			output += "To: " + accountTo;
+		} else {
+			output += "From: " + accountFrom;
 		}
 		output += "     ";
 		output += "$" + amount;

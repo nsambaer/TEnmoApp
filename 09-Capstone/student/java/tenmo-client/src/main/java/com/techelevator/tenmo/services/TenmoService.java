@@ -50,7 +50,12 @@ public class TenmoService {
 		return Arrays.asList(users);
 	}
 	
-	
+	public Transfer makeTransfer(Transfer transfer, int currentUserId) {
+		
+		transfer = restTemplate.postForObject(BASE_URL + "account/" + currentUserId + "/transfers", makeTransferEntity(transfer), Transfer.class);
+		return transfer;
+		
+	}
 
 	private HttpEntity<Transfer> makeTransferEntity(Transfer transfer) {
 		HttpHeaders headers = new HttpHeaders();
