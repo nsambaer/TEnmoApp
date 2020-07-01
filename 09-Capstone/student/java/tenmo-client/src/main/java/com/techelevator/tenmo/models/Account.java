@@ -18,8 +18,8 @@ public class Account {
 		this.accountId = accountId;
 		this.userId = userId;
 		this.balance = balance;
+		this.balance = this.balance.setScale(2);
 	}
-	
 	
 	
 	public int getAccountId() {
@@ -30,5 +30,10 @@ public class Account {
 	}
 	public BigDecimal getBalance() {
 		return balance;
+	}
+	
+	@Override
+	public String toString() {
+		return "$" + balance;
 	}
 }
