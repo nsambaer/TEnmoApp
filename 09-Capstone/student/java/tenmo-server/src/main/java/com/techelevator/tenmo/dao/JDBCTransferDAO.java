@@ -29,8 +29,8 @@ public class JDBCTransferDAO implements TransferDAO {
 				+ "ON t.transfer_type_id = tt.transfer_type_id "
 				+ "INNER JOIN transfer_statuses ts "
 				+ "ON t.transfer_status_id = ts.transfer_status_id "
-				+ "WHERE account_from = ?";
-		SqlRowSet results = jdbc.queryForRowSet(sql, userId);
+				+ "WHERE account_from = ? OR account_to = ?";
+		SqlRowSet results = jdbc.queryForRowSet(sql, userId, userId);
 		
 		while(results.next()) {
 			Transfer transfer = mapRowToTransfer(results);

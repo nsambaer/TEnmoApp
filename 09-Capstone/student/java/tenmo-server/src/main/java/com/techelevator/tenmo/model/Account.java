@@ -19,7 +19,7 @@ public class Account {
 		this.balance = balance;
 	}
 
-	public long getAccountId() {
+	public int getAccountId() {
 		return accountId;
 	}
 
@@ -27,7 +27,7 @@ public class Account {
 		this.accountId = accountId;
 	}
 
-	public long getUserId() {
+	public int getUserId() {
 		return userId;
 	}
 

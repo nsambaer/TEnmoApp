@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.jdbc.support.rowset.SqlRowSetMetaData;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,20 @@ public class UserSqlDAO implements UserDAO {
         return jdbcTemplate.queryForObject("select user_id from users where username = ?", int.class, username);
     }
 
+    @Override
+    public List<User> findAllUsersSanitized() {
+    	List<User> users = new ArrayList<>();
+    	String sql = "SELECT user_id, username FROM users";
+    	
+    	SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+    	while (results.next()) {
+    		User user = mapRowToUser(results);
+    		users.add(user);
+    	}
+    	
+    	return users;
+    }
+    
     @Override
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
@@ -81,11 +96,15 @@ public class UserSqlDAO implements UserDAO {
 
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();
+        SqlRowSetMetaData metaData = rs.getMetaData();
+                
         user.setId(rs.getLong("user_id"));
         user.setUsername(rs.getString("username"));
+        if (metaData.getColumnCount() > 2) {
         user.setPassword(rs.getString("password_hash"));
         user.setActivated(true);
         user.setAuthorities("ROLE_USER");
+        }
         return user;
     }
 }

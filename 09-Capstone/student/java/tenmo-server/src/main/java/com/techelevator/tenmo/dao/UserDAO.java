@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface UserDAO {
 
+	public List<User> findAllUsersSanitized();
+	
     List<User> findAll();
 
     User findByUsername(String username);

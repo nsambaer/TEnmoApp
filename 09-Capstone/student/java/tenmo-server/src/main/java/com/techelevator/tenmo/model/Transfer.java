@@ -25,7 +25,7 @@ public class Transfer {
 		this.amount = amount;
 	}
 
-	public long getTransferId() {
+	public int getTransferId() {
 		return transferId;
 	}
 
@@ -49,7 +49,7 @@ public class Transfer {
 		this.transferStatus = transferStatus;
 	}
 
-	public long getAccountFromId() {
+	public int getAccountFromId() {
 		return accountFromId;
 	}
 
@@ -57,7 +57,7 @@ public class Transfer {
 		this.accountFromId = accountFromId;
 	}
 
-	public long getAccountToId() {
+	public int getAccountToId() {
 		return accountToId;
 	}
 
