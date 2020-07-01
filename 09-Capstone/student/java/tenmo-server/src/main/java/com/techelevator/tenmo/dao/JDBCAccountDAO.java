@@ -6,9 +6,11 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
 import com.techelevator.tenmo.model.Account;
 
+@Component
 public class JDBCAccountDAO implements AccountDAO {
 
 	private JdbcTemplate jdbc;
