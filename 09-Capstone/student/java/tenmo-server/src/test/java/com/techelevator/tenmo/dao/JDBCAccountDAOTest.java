@@ -17,14 +17,21 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.User;
 
 public class JDBCAccountDAOTest {
 
 	private static SingleConnectionDataSource dataSource;
 	private JDBCAccountDAO accountDAO;
 	private UserDAO uDAO;
-	private static final int USER_ID = 100;
-	private Account expectedAccount;
+	private User user1;
+	private static final int USER_ONE = 15;
+	private User user2;
+	private static final int USER_TWO = 16;
+	private Account account1;
+	private Account account2;
+//	private static final int USER_ID = 100;
+//	private Account expectedAccount;
 
 	@BeforeClass
 	public static void setUpDataSource() {
@@ -42,15 +49,37 @@ public class JDBCAccountDAOTest {
 
 	@Before
 	public void setup() {
-		expectedAccount = new Account(100, USER_ID, BigDecimal.valueOf(1000));
 		accountDAO = new JDBCAccountDAO(dataSource, uDAO);
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-
+		
+		//clean db
+		String[] sqlDelete= {"DELETE FROM transfers", "DELETE FROM accounts", "DELETE FROM users"};
+		for (String sql: sqlDelete) {
+		jdbcTemplate.update(sql);
+		}
+		
+		//add test objects
+		user1 = new User(15l, "Hall", "123456789abcdefg", "user");
+		user2 = new User(16l, "Oates", "123456789abcdefg", "user");
+		
 		String sqlAddUser = "INSERT INTO users (user_id, username, password_hash) "
-						  + "VALUES (?, 'Han Solo', '123456789qwerty')";
-		jdbcTemplate.update(sqlAddUser, USER_ID);
-		String sqlAddAccount = "INSERT INTO accounts (account_id, user_id, balance) " + "VALUES (?, ?, ?)";
-		jdbcTemplate.update(sqlAddAccount, expectedAccount.getAccountId(), USER_ID, expectedAccount.getBalance());
+						  + "VALUES (?,?,?)";
+		jdbcTemplate.update(sqlAddUser, user1.getId(), user1.getUsername(), user1.getPassword());
+		jdbcTemplate.update(sqlAddUser, user2.getId(), user2.getUsername(), user2.getPassword());
+		
+		
+		account1 = new Account(USER_ONE, USER_ONE, BigDecimal.valueOf(100.00));
+		account2 = new Account(USER_TWO, USER_TWO, BigDecimal.valueOf(200.00));
+		
+		String sqlAddAccount = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?,?,?)";
+		jdbcTemplate.update(sqlAddAccount, account1.getAccountId(), account1.getUserId(), account1.getBalance());
+		jdbcTemplate.update(sqlAddAccount, account2.getAccountId(), account2.getUserId(), account2.getBalance());
+
+//		String sqlAddUser = "INSERT INTO users (user_id, username, password_hash) "
+//						  + "VALUES (?, 'Han Solo', '123456789qwerty')";
+//		jdbcTemplate.update(sqlAddUser, USER_ID);
+//		String sqlAddAccount = "INSERT INTO accounts (account_id, user_id, balance) " + "VALUES (?, ?, ?)";
+//		jdbcTemplate.update(sqlAddAccount, expectedAccount.getAccountId(), USER_ID, expectedAccount.getBalance());
 	}
 
 	@After
@@ -59,28 +88,34 @@ public class JDBCAccountDAOTest {
 	}
 
 	@Test
-	public void getAccountByUserId() {
+	public void getAccountByUserIdTest() {
 
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		Account actualAccount = accountDAO.getAccountByUserId(USER_ID);
+		Account actualAccount = accountDAO.getAccountByUserId(USER_ONE);
 
 		assertNotNull(actualAccount);
-		assertAccountEquals(expectedAccount, actualAccount);
+		assertAccountEquals(account1, actualAccount);
 	}
 	
 	@Test
-	public void updateAccountBalance() throws OverdraftException {
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		String username = "Han Solo";
-		BigDecimal originalBalance = BigDecimal.valueOf(1000);
-		BigDecimal amount = BigDecimal.valueOf(10);
-		BigDecimal updatedBalance = BigDecimal.valueOf(990);
-		
-		Account savedAccount = accountDAO.updateAccountBalance(expectedAccount.getUserId(), amount);
-		
+	public void updateAccountBalanceTest() throws OverdraftException {
+
+//		String username = "Han Solo";
+//		BigDecimal originalBalance = BigDecimal.valueOf(1000);
+//		BigDecimal amount = BigDecimal.valueOf(10);
+//		BigDecimal updatedBalance = BigDecimal.valueOf(990);
+//		
+//		Account savedAccount = accountDAO.updateAccountBalance(expectedAccount.getUserId(), amount);
+//		
 //			Account actualAccount = accountDAO.updateAccountBalance("Han Solo", BigDecimal.valueOf(1));
 //
 //			assertAccountEquals(expectedAccount, actualAccount);
+		BigDecimal amount = BigDecimal.valueOf(200);
+		
+		account1.setBalance(BigDecimal.valueOf(300.00));
+		accountDAO.updateAccountBalance(user1.getUsername(), amount);
+		Account testAccount = accountDAO.getAccountByUserId(USER_ONE);
+		
+		assertAccountEquals(account1, testAccount);
 		
 		
 	}
