@@ -8,7 +8,7 @@ public interface AccountDAO {
 	
 	public Account getAccountByUserId(int userId);
 
-	public Account updateAccountBalance(String username, BigDecimal amount);
+	public Account updateAccountBalance(String username, BigDecimal amount) throws OverdraftException;
 	
 	//public Account getAccountByAccountId(int accountId);
 

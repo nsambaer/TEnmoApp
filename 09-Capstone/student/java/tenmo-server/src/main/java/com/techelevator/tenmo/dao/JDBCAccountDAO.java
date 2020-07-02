@@ -35,9 +35,15 @@ public class JDBCAccountDAO implements AccountDAO {
 	}
 	
 	@Override
-	public Account updateAccountBalance(String username, BigDecimal amount) {
+	public Account updateAccountBalance(String username, BigDecimal amount) throws OverdraftException {
+		
 		
 		Account account = getAccountByUserId(uDAO.findIdByUsername(username));
+		if (amount.compareTo(BigDecimal.ZERO) < 0) { //if amount is negative, then we are modifying the account transferred to
+			if (account.getBalance().compareTo(amount) < 0) { // if balance is less than amount an overdraft would happen, so an exception is thrown
+				throw new OverdraftException();
+			}
+		}
 		account.setBalance(account.getBalance().add(amount));
 		String sql = "UPDATE accounts "
 					+ "SET balance = ? "
