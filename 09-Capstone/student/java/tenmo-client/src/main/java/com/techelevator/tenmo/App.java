@@ -9,6 +9,7 @@ import com.techelevator.tenmo.models.UserCredentials;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.AuthenticationServiceException;
 import com.techelevator.tenmo.services.TenmoService;
+import com.techelevator.tenmo.services.TenmoServiceException;
 import com.techelevator.tenmo.services.TransferService;
 import com.techelevator.view.ConsoleService;
 
@@ -39,7 +40,7 @@ public class App {
 	private String currentUsername;
 	private TransferService transferService;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws TenmoServiceException {
 		App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL),
 				new TenmoService(API_BASE_URL));
 		app.run();
@@ -62,6 +63,7 @@ public class App {
 	}
 
 	private void mainMenu() {
+		try {
 		while (true) {
 			String choice = (String) console.getChoiceFromOptions(MAIN_MENU_OPTIONS);
 			if (MAIN_MENU_OPTION_VIEW_BALANCE.equals(choice)) {
@@ -81,15 +83,18 @@ public class App {
 				exitProgram();
 			}
 		}
+		} catch (TenmoServiceException ex) {
+			System.out.println(ex.getMessage());
+		}
 	}
 
-	private void viewCurrentBalance() {
+	private void viewCurrentBalance() throws TenmoServiceException {
 		System.out.println("------------------------------------------");
 		System.out.println("Your current balance is: " + tenmoService.listCurrentBalance(currentUserId));
 		System.out.println("------------------------------------------");
 	}
 
-	private void viewTransferHistory() {
+	private void viewTransferHistory() throws TenmoServiceException {
 		Transfer[] transferHistory = tenmoService.listTransferHistory(currentUserId);
 		System.out.println("------------------------------------------");
 		System.out.println("Transfers");
@@ -117,9 +122,12 @@ public class App {
 		// not yet
 	}
 
-	private void sendBucks() {
+	private void sendBucks() throws TenmoServiceException {
 		
 		Transfer transfer = transferService.sendTransfer(currentUser.getUser());
+		if (transfer == null) {
+			return;
+		}
 		tenmoService.makeTransfer(transfer, currentUserId);
 	}
 
@@ -176,6 +184,7 @@ public class App {
 			try {
 				currentUser = authenticationService.login(credentials);
 				tenmoService.AUTH_TOKEN = currentUser.getToken();
+				//storing the id and username as private variables to make it easier to call them later
 				currentUserId = currentUser.getUser().getId();
 				currentUsername = currentUser.getUser().getUsername();
 			} catch (AuthenticationServiceException e) {

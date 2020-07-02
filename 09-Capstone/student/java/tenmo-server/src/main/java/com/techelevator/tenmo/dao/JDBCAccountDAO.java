@@ -40,7 +40,7 @@ public class JDBCAccountDAO implements AccountDAO {
 		
 		Account account = getAccountByUserId(uDAO.findIdByUsername(username));
 		if (amount.compareTo(BigDecimal.ZERO) < 0) { //if amount is negative, then we are modifying the account transferred to
-			if (account.getBalance().compareTo(amount) < 0) { // if balance is less than amount an overdraft would happen, so an exception is thrown
+			if (account.getBalance().compareTo(amount.negate()) < 0) { // if balance is less than amount an overdraft would happen, so an exception is thrown
 				throw new OverdraftException();
 			}
 		}
