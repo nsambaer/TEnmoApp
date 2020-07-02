@@ -31,6 +31,7 @@ public class Transfer {
 		this.accountFrom = accountFrom;
 		this.accountTo = accountTo;
 		this.amount = amount;
+		this.amount = this.amount.setScale(2);
 	}
 
 	public int getTransferId() {
@@ -79,6 +80,7 @@ public class Transfer {
 
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
+		this.amount = this.amount.setScale(2);
 	}
 
 }
