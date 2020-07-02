@@ -53,9 +53,10 @@ public class Transfer {
 		return amount;
 	}
 
+	//this returns a small overview to be used when displaying transaction history to a user
 	public String listOverview(String username) {
 		String output = transferId + "        ";
-		if (username.equals(accountFrom)) {
+		if (username.equals(accountFrom)) { //checking to see if the user sent or received the transaction in order to show them the relevant to or from field
 			output += "To: " + accountTo;
 		} else {
 			output += "From: " + accountFrom;
@@ -66,7 +67,7 @@ public class Transfer {
 	}
 	
 	@Override
-	public String toString() {
+	public String toString() { //this is used to show the full transaction details
 		return " ID: " + transferId + "\n From: " + accountFrom + "\n To: " + accountTo + "\n Type: " + transferType + "\n Status: " + transferStatus
 				+ "\n Amount: $" + amount;
 	}

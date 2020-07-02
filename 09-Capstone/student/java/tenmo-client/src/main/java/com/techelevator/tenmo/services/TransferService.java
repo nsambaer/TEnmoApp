@@ -11,6 +11,8 @@ import com.techelevator.view.ConsoleService;
 
 public class TransferService {
 
+	//this class was created to 
+	
 	private TenmoService tenmoService;
 	private ConsoleService console;
 
@@ -19,24 +21,24 @@ public class TransferService {
 		this.console = console;
 	}
 
-	public Transfer sendTransfer(User fromUser) {
+	public Transfer sendTransfer(User fromUser) throws TenmoServiceException {
 		String fromAccountUsername = fromUser.getUsername();
 		BigDecimal amount;
 		String prompt = "Enter ID of user you are sending to (0 to cancel)";
 		String toAccountUsername = selectUser(fromUser.getId(), prompt);
-		if (toAccountUsername == null) {
+		if (toAccountUsername == null) { // if toAccountUsername is null, the user entered a zero and wants to cancel the transfer
 			return null;
 		}
 		while (true) {
 			amount = getAmount();
-			Account account = tenmoService.listCurrentBalance(fromUser.getId());
-			if (amount.compareTo(account.getBalance()) > 0) {
-				System.out.println("Your requested transfer amount will overdraft your account. Please try again.");
-			}
-			else {
+//			Account account = tenmoService.listCurrentBalance(fromUser.getId());
+//			if (amount.compareTo(account.getBalance()) > 0) {
+//				System.out.println("Your requested transfer amount will overdraft your account. Please try again.");
+//			}
+//			else {
 				break;
 			}
-		}
+//		}
 		String status = "Approved";
 		String type = "Send";
 		Transfer transfer = new Transfer(0, type, status, fromAccountUsername, toAccountUsername, amount);
@@ -55,14 +57,16 @@ public class TransferService {
 		}
 	}
 
-	public String selectUser(int currentUserId, String prompt) {
+	public String selectUser(int currentUserId, String prompt) throws TenmoServiceException {
 		List<User> userList = new ArrayList<>();
 		userList = tenmoService.viewAllUsers();
-//		for (int i = 0; i < userList.size(); i++) {
-//			if (userList.get(i).getId() == currentUserId) {
-//				userList.remove(i);
-//			}
-//		}
+		
+		//this block is to prevent the user's own id from showing up in the list of people to send or request a transfer from
+		for (int i = 0; i < userList.size(); i++) {
+			if (userList.get(i).getId() == currentUserId) {
+				userList.remove(i);
+			}
+		}
 
 		System.out.println("------------------------------------------");
 		System.out.println("Users");
@@ -73,6 +77,7 @@ public class TransferService {
 		}
 		while (true) {
 			int userId = console.getUserInputInteger(prompt);
+			//validation for 
 			if (userId < 0) {
 				System.out.println("You have entered a negative number. Please try again.");
 			} else {

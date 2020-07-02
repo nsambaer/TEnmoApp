@@ -31,7 +31,7 @@ public class UserSqlDAO implements UserDAO {
 
     @Override 
     //this will only select information that is safe to send out to the client when it requests a user list. 
-    //Otherwise the password hash and user roles will be transmitted over the "web" :(
+    //Otherwise the password hash and user roles will be transmitted over the "web" (big stinky)
     public List<User> findAllUsersSanitized() { 
     	List<User> users = new ArrayList<>();
     	String sql = "SELECT user_id, username FROM users";

@@ -1,6 +1,5 @@
 package com.techelevator.view;
 
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -35,7 +34,8 @@ public class ConsoleService {
 				choice = options[selectedOption - 1];
 			}
 		} catch (NumberFormatException e) {
-			// eat the exception, an error message will be displayed below since choice will be null
+			// eat the exception, an error message will be displayed below since choice will
+			// be null
 		}
 		if (choice == null) {
 			out.println("\n*** " + userInput + " is not a valid option ***\n");
@@ -54,7 +54,7 @@ public class ConsoleService {
 	}
 
 	public String getUserInput(String prompt) {
-		out.print(prompt+": ");
+		out.print(prompt + ": ");
 		out.flush();
 		return in.nextLine();
 	}
@@ -62,15 +62,20 @@ public class ConsoleService {
 	public Integer getUserInputInteger(String prompt) {
 		Integer result = null;
 		do {
-			out.print(prompt+": ");
+			out.print(prompt + ": ");
 			out.flush();
 			String userInput = in.nextLine();
 			try {
 				result = Integer.parseInt(userInput);
-			} catch(NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				out.println("\n*** " + userInput + " is not valid ***\n");
 			}
-		} while(result == null);
+		} while (result == null);
 		return result;
 	}
+
+	public void printError(String errorMessage) {
+		System.err.println(errorMessage);
+	}
+
 }

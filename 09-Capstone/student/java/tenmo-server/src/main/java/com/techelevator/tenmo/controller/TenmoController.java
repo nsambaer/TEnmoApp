@@ -4,14 +4,17 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.techelevator.tenmo.dao.AccountDAO;
+import com.techelevator.tenmo.dao.OverdraftException;
 import com.techelevator.tenmo.dao.TransferDAO;
 import com.techelevator.tenmo.dao.UserDAO;
 import com.techelevator.tenmo.model.Account;
@@ -43,10 +46,11 @@ public class TenmoController {
 		return uDAO.findAllUsersSanitized();
 	}
 	
+	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(path = "/account/{userId}/transfers", method = RequestMethod.POST)
-	public Transfer makeTransfer(@Valid @RequestBody Transfer transfer) {		
-		
-		aDAO.updateAccountBalance(transfer.getAccountFrom(), transfer.getAmount().negate());
+	public Transfer makeTransfer(@Valid @RequestBody Transfer transfer) throws OverdraftException {		
+		//accountupdate is run twice, once for the account being transferred from, once for the account being transferred to
+		aDAO.updateAccountBalance(transfer.getAccountFrom(), transfer.getAmount().negate()); //amount is the same but should be subtracted from the balance so it is set to negative
 		aDAO.updateAccountBalance(transfer.getAccountTo(), transfer.getAmount());
 		return tDAO.createTransfer(transfer);
 	}

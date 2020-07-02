@@ -2,13 +2,21 @@ package com.techelevator.tenmo.model;
 
 import java.math.BigDecimal;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+
 public class Transfer {
 
 	private int transferId;
+	@NotBlank(message = "Transfer type should not be blank")
 	private String transferType;
+	@NotBlank(message = "Transfer status should not be blank")
 	private String transferStatus;
+	@NotBlank(message = "Account being transferred from should not be blank")
 	private String accountFrom;
+	@NotBlank(message = "Account being transferred to should not be blank")
 	private String accountTo;
+	@DecimalMin(value = "0.01", message = "Transfer amount should be more than zero")
 	private BigDecimal amount;
 
 	public Transfer() {
