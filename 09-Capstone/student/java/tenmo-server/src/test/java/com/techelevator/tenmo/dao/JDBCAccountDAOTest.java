@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 
 import org.junit.After;
@@ -17,14 +18,14 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.techelevator.tenmo.model.Account;
 
-
 public class JDBCAccountDAOTest {
 
 	private static SingleConnectionDataSource dataSource;
 	private JDBCAccountDAO accountDAO;
 	private UserDAO uDAO;
 	private static final int USER_ID = 100;
-	
+	private Account expectedAccount;
+
 	@BeforeClass
 	public static void setUpDataSource() {
 		dataSource = new SingleConnectionDataSource();
@@ -38,21 +39,20 @@ public class JDBCAccountDAOTest {
 	public static void tearDownAfterClass() throws SQLException {
 		dataSource.destroy();
 	}
-	
+
 	@Before
 	public void setup() {
-	accountDAO = new JDBCAccountDAO(dataSource, uDAO);
-	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-	
-	//add 
-	String sqlAddUser = "INSERT INTO users (user_id, username, password_hash) "
-					  + "VALUES (?, 'Han Solo', '123456789qwerty')";
-	jdbcTemplate.update(sqlAddUser, USER_ID);
-	String sqlAddAccount = "INSERT INTO accounts (account_id, user_id, balance) "
-						 + "VALUES (100, ?, 1000)";
-	jdbcTemplate.update(sqlAddAccount, USER_ID);
+		expectedAccount = new Account(100, USER_ID, BigDecimal.valueOf(1000));
+		accountDAO = new JDBCAccountDAO(dataSource, uDAO);
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+		String sqlAddUser = "INSERT INTO users (user_id, username, password_hash) "
+						  + "VALUES (?, 'Han Solo', '123456789qwerty')";
+		jdbcTemplate.update(sqlAddUser, USER_ID);
+		String sqlAddAccount = "INSERT INTO accounts (account_id, user_id, balance) " + "VALUES (?, ?, ?)";
+		jdbcTemplate.update(sqlAddAccount, expectedAccount.getAccountId(), USER_ID, expectedAccount.getBalance());
 	}
-	
+
 	@After
 	public void rollback() throws SQLException {
 		dataSource.getConnection().rollback();
@@ -62,15 +62,36 @@ public class JDBCAccountDAOTest {
 	public void getAccountByUserId() {
 
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		String sql = "SELECT * FROM accounts WHERE user_id = ?";
-		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, USER_ID);
-		results.next();
+		Account actualAccount = accountDAO.getAccountByUserId(USER_ID);
+
+		assertNotNull(actualAccount);
+		assertAccountEquals(expectedAccount, actualAccount);
+	}
+	
+	@Test
+	public void updateAccountBalance() throws OverdraftException {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		String username = "Han Solo";
+		BigDecimal originalBalance = BigDecimal.valueOf(1000);
+		BigDecimal amount = BigDecimal.valueOf(10);
+		BigDecimal updatedBalance = BigDecimal.valueOf(990);
 		
-		Account account = accountDAO.getAccountByUserId(USER_ID);
+		Account savedAccount = accountDAO.updateAccountBalance(expectedAccount.getUserId(), amount);
 		
-		assertNotNull(account);
-		assertEquals(results.getInt(2), account.getUserId());
-		//assertAccountEquals(results, account);
+//			Account actualAccount = accountDAO.updateAccountBalance("Han Solo", BigDecimal.valueOf(1));
+//
+//			assertAccountEquals(expectedAccount, actualAccount);
+		
+		
+	}
+	
+	
+	private Account getAccount(int accountId, int userId, BigDecimal balance) {
+		Account theAccount = new Account();
+		theAccount.setAccountId(accountId);
+		theAccount.setUserId(userId);
+		theAccount.setBalance(balance);
+		return theAccount;
 	}
 	
 	private void assertAccountEquals(Account expected, Account actual) {
