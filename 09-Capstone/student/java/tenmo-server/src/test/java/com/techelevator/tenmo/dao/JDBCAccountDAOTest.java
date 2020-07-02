@@ -99,16 +99,6 @@ public class JDBCAccountDAOTest {
 	@Test
 	public void updateAccountBalanceTest() throws OverdraftException {
 
-//		String username = "Han Solo";
-//		BigDecimal originalBalance = BigDecimal.valueOf(1000);
-//		BigDecimal amount = BigDecimal.valueOf(10);
-//		BigDecimal updatedBalance = BigDecimal.valueOf(990);
-//		
-//		Account savedAccount = accountDAO.updateAccountBalance(expectedAccount.getUserId(), amount);
-//		
-//			Account actualAccount = accountDAO.updateAccountBalance("Han Solo", BigDecimal.valueOf(1));
-//
-//			assertAccountEquals(expectedAccount, actualAccount);
 		BigDecimal amount = BigDecimal.valueOf(200);
 		
 		account1.setBalance(BigDecimal.valueOf(300.00));
