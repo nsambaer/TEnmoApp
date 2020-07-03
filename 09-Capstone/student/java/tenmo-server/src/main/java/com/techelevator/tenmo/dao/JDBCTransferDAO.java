@@ -69,6 +69,17 @@ public class JDBCTransferDAO implements TransferDAO {
 		return transfer;
 	}
 
+	@Override
+	public Transfer updateTransfer(Transfer transfer) {
+		String sql = "UPDATE transfers "
+				+ "SET transfer_status_id = (SELECT transfer_status_id FROM transfer_statuses WHERE transfer_status_desc = ?) "
+				+ "WHERE transfer_id = ?";
+		jdbc.update(sql, transfer.getTransferStatus(), transfer.getTransferId());
+		return transfer;
+	}
+	
+	
+	
 	private Transfer mapRowToTransfer(SqlRowSet results) {
 		Transfer transfer = new Transfer();
 		transfer.setTransferId(results.getInt("transfer_id"));

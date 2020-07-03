@@ -3,6 +3,7 @@ package com.techelevator.tenmo.models;
 public class ExceptionHandler {
 	/*
 		The goal of this class is to allow for easy printing of different parts of the exception message
+		substrings in the getter methods are to remove quotation marks and the labels for the different parts
 	*/
 	private String timestamp;
 	private String status;
@@ -14,7 +15,8 @@ public class ExceptionHandler {
 	public ExceptionHandler(String rawMessage) {
 		String[] raw = rawMessage.split(",");
 		
-		
+		//in the event that the message is not what this constructor expects, the split may fail and cause an out of bounds exception
+		//in that case the whole message will just be returned to the console
 		try {
 		this.timestamp = raw[0];
 		this.status = raw[1];

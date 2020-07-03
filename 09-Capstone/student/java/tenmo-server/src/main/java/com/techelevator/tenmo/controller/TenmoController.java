@@ -50,10 +50,27 @@ public class TenmoController {
 	@RequestMapping(path = "/account/{userId}/transfers", method = RequestMethod.POST)
 	public Transfer makeTransfer(@Valid @RequestBody Transfer transfer) throws OverdraftException {		
 		//accountupdate is run twice, once for the account being transferred from, once for the account being transferred to
+		//accountupdate will only be run if the transfer has a status of approved
+		if (transfer.getTransferStatus().equals("Approved")){
 		aDAO.updateAccountBalance(transfer.getAccountFrom(), transfer.getAmount().negate()); //amount is the same but should be subtracted from the balance so it is set to negative
 		aDAO.updateAccountBalance(transfer.getAccountTo(), transfer.getAmount());
+		}
 		return tDAO.createTransfer(transfer);
 	}
+	
+	@ResponseStatus(HttpStatus.ACCEPTED)
+	@RequestMapping(path = "/account/{userId}/transfers", method = RequestMethod.PUT)
+	public Transfer updateTransfer(@Valid @RequestBody Transfer transfer) throws OverdraftException {
+		//accountupdate is run twice, once for the account being transferred from, once for the account being transferred to
+		//accountupdate will only be run if the transfer has a status of approved
+		if (transfer.getTransferStatus().equals("Approved")) {
+			aDAO.updateAccountBalance(transfer.getAccountFrom(), transfer.getAmount().negate()); //amount is the same but should be subtracted from the balance so it is set to negative
+			aDAO.updateAccountBalance(transfer.getAccountTo(), transfer.getAmount());
+		}
+		return tDAO.updateTransfer(transfer);
+	}
+	
+	
 	
 	@RequestMapping(path = "account/{userId}/transfers", method = RequestMethod.GET)
 	public List<Transfer> listTransferHistory(@PathVariable int userId) {

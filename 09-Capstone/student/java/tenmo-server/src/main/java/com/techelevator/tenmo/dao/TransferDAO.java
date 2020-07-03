@@ -10,5 +10,5 @@ public interface TransferDAO {
 
 	public Transfer createTransfer(Transfer transfer);
 	
-
+	public Transfer updateTransfer(Transfer transfer);
 }
