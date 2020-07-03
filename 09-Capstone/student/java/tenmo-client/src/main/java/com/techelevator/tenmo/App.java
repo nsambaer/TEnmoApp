@@ -14,6 +14,7 @@ import com.techelevator.tenmo.services.TenmoServiceException;
 import com.techelevator.tenmo.services.TransferService;
 import com.techelevator.view.ConsoleService;
 
+
 public class App {
 
 	private static final String API_BASE_URL = "http://localhost:8080/";
@@ -111,7 +112,7 @@ public class App {
 		} else {
 			System.out.println("------------------------------------------");
 			System.out.println("Transfers");
-			System.out.printf("%-8s %-20s %-10s\n", "ID", "From/To", "Amount");
+			System.out.printf("%-8s %-30s %-10s\n", "ID", "From/To", "Amount");
 			System.out.println("------------------------------------------");
 			for (Transfer t : transferHistory) {
 				System.out.println(t.listOverview(currentUsername));
@@ -138,7 +139,7 @@ public class App {
 		List<Transfer> pendingTransfers = new ArrayList<>();
 
 		for (Transfer t : transferHistory) {
-			if (t.getAccountTo().equals(currentUsername)) {
+			if (t.getAccountFrom().equals(currentUsername)) {
 				if (t.getTransferStatus().equals("Pending")) {
 					pendingTransfers.add(t);
 				}
@@ -165,7 +166,9 @@ public class App {
 					correctChoice = true;
 				}
 			}
-			System.out.println("Invalid transfer ID. Please enter a valid ID.");
+			if (!correctChoice) {
+				System.out.println("Invalid transfer ID. Please enter a valid ID.");
+			}
 		}
 
 		String choice = (String) console.getChoiceFromOptions(PENDING_MENU_OPTIONS);

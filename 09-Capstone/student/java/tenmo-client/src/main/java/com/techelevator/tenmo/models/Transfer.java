@@ -68,7 +68,7 @@ public class Transfer {
 			String formatAccountTo = accountTo;
 			int accountToLength = formatAccountTo.length();
 			output += "To: ";
-			for (int i = 0; i <= (16 - accountToLength); i++) {
+			for (int i = 0; i <= (26 - accountToLength); i++) {
 				formatAccountTo += " ";
 			}
 			output += formatAccountTo;
@@ -77,7 +77,7 @@ public class Transfer {
 			String formatAccountFrom = accountFrom;
 			int accountFromLength = formatAccountFrom.length();
 			output += "From: ";
-			for (int i = 0; i <= (14 - accountFromLength); i++) {
+			for (int i = 0; i <= (24 - accountFromLength); i++) {
 				formatAccountFrom += " ";
 			}
 			output += formatAccountFrom;
