@@ -22,7 +22,7 @@ public class JDBCAccountDAO implements AccountDAO {
 	}
 	
 	@Override
-	public Account getAccountByUserId(int userId) {
+	public Account getAccountByUserId(long userId) {
 
 		Account account = new Account();
 		String sql = "SELECT * FROM accounts WHERE user_id = ?";
@@ -36,7 +36,6 @@ public class JDBCAccountDAO implements AccountDAO {
 	
 	@Override
 	public Account updateAccountBalance(String username, BigDecimal amount) throws OverdraftException {
-		
 		
 		Account account = getAccountByUserId(uDAO.findIdByUsername(username));
 		if (amount.compareTo(BigDecimal.ZERO) < 0) { //if amount is negative, then we are modifying the account transferred to

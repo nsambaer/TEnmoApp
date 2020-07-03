@@ -49,8 +49,9 @@ public class JDBCAccountDAOTest {
 
 	@Before
 	public void setup() {
-		accountDAO = new JDBCAccountDAO(dataSource, uDAO);
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		uDAO = new UserSqlDAO(jdbcTemplate);
+		accountDAO = new JDBCAccountDAO(dataSource, uDAO);
 		
 		//clean db
 		String[] sqlDelete= {"DELETE FROM transfers", "DELETE FROM accounts", "DELETE FROM users"};
