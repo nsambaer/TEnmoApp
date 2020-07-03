@@ -100,6 +100,9 @@ public class App {
 		System.out.println("Transfers");
 		System.out.println("ID        From/To                Amount");
 		System.out.println("------------------------------------------");
+		if (transferHistory.length == 0) {
+			System.out.println("You have no previous transfers.");
+		}
 		for (Transfer t : transferHistory) {
 			System.out.println(t.listOverview(currentUsername));
 		}
