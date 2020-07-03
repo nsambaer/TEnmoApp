@@ -67,7 +67,8 @@ public class Transfer {
 		if (username.equals(accountFrom)) {
 			String formatAccountTo = accountTo;
 			int accountToLength = formatAccountTo.length();
-			for (int i = 0; i <= (20 - accountToLength); i++) {
+			output += "To: ";
+			for (int i = 0; i <= (16 - accountToLength); i++) {
 				formatAccountTo += " ";
 			}
 			output += formatAccountTo;
@@ -75,7 +76,8 @@ public class Transfer {
 		else {
 			String formatAccountFrom = accountFrom;
 			int accountFromLength = formatAccountFrom.length();
-			for (int i = 0; i <= (20 - accountFromLength); i++) {
+			output += "From: ";
+			for (int i = 0; i <= (14 - accountFromLength); i++) {
 				formatAccountFrom += " ";
 			}
 			output += formatAccountFrom;
