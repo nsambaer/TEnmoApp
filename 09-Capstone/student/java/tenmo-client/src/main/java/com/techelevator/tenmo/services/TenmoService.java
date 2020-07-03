@@ -1,7 +1,6 @@
 package com.techelevator.tenmo.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.HttpEntity;
@@ -71,6 +70,15 @@ public class TenmoService {
 		}
 		return transfer;
 		
+	}
+	
+	public Transfer updateTransfer(Transfer transfer, int currentUserId) throws TenmoServiceException {
+		try {
+			transfer = restTemplate.exchange(BASE_URL + "account/" + currentUserId + "/transfers", HttpMethod.PUT, makeTransferEntity(transfer), Transfer.class).getBody();
+		} catch (RestClientResponseException ex) {
+			throw new TenmoServiceException(ex.getResponseBodyAsString());
+		}
+		return transfer;
 	}
 
 	private HttpEntity<Transfer> makeTransferEntity(Transfer transfer) {
