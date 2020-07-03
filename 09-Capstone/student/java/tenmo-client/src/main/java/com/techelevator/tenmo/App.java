@@ -103,7 +103,7 @@ public class App {
 		} else {
 			System.out.println("------------------------------------------");
 			System.out.println("Transfers");
-			System.out.println("ID        From/To                Amount");
+			System.out.printf("%-8s %-20s %-10s\n", "ID", "From/To", "Amount"); 
 			System.out.println("------------------------------------------");
 			for (Transfer t : transferHistory) {
 				System.out.println(t.listOverview(currentUsername));
