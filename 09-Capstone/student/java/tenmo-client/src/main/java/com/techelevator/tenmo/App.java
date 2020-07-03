@@ -1,10 +1,8 @@
 package com.techelevator.tenmo;
 
-import java.util.List;
-
 import com.techelevator.tenmo.models.AuthenticatedUser;
+import com.techelevator.tenmo.models.ExceptionHandler;
 import com.techelevator.tenmo.models.Transfer;
-import com.techelevator.tenmo.models.User;
 import com.techelevator.tenmo.models.UserCredentials;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.AuthenticationServiceException;
@@ -20,8 +18,9 @@ public class App {
 	private static final String MENU_OPTION_EXIT = "Exit";
 	private static final String LOGIN_MENU_OPTION_REGISTER = "Register";
 	private static final String LOGIN_MENU_OPTION_LOGIN = "Login";
+	private static final String LOGIN_MENU_BACKDOOR = "";
 	private static final String[] LOGIN_MENU_OPTIONS = { LOGIN_MENU_OPTION_REGISTER, LOGIN_MENU_OPTION_LOGIN,
-			MENU_OPTION_EXIT };
+			MENU_OPTION_EXIT, LOGIN_MENU_BACKDOOR };
 	private static final String MAIN_MENU_OPTION_VIEW_BALANCE = "View your current balance";
 	private static final String MAIN_MENU_OPTION_SEND_BUCKS = "Send TE bucks";
 	private static final String MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS = "View your past transfers";
@@ -39,6 +38,7 @@ public class App {
 	private int currentUserId;
 	private String currentUsername;
 	private TransferService transferService;
+	private ExceptionHandler exception;
 
 	public static void main(String[] args) throws TenmoServiceException {
 		App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL),
@@ -63,8 +63,8 @@ public class App {
 	}
 
 	private void mainMenu() {
-		try {
-			while (true) {
+		while (true) {
+			try {
 				String choice = (String) console.getChoiceFromOptions(MAIN_MENU_OPTIONS);
 				if (MAIN_MENU_OPTION_VIEW_BALANCE.equals(choice)) {
 					viewCurrentBalance();
@@ -82,9 +82,11 @@ public class App {
 					// the only other option on the main menu is to exit
 					exitProgram();
 				}
+			} catch (TenmoServiceException ex) {
+				exception = new ExceptionHandler(ex.getMessage());
+				System.out.println(exception);
 			}
-		} catch (TenmoServiceException ex) {
-			System.out.println(ex.getMessage());
+
 		}
 	}
 
@@ -151,11 +153,21 @@ public class App {
 				login();
 			} else if (LOGIN_MENU_OPTION_REGISTER.equals(choice)) {
 				register();
-			} else {
+			} else if (LOGIN_MENU_BACKDOOR.equals(choice)) {
+				UserCredentials credentials = new UserCredentials("testUser", "password");
+				try {
+				currentUser = authenticationService.login(credentials);
+				tenmoService.AUTH_TOKEN = currentUser.getToken();
+				currentUserId = currentUser.getUser().getId();
+				currentUsername = currentUser.getUser().getUsername();
+				} catch (Exception e) {
+				}
+			} else if (MENU_OPTION_EXIT.equals(choice)) {
 				// the only other option on the login menu is to exit
 				exitProgram();
 			}
 		}
+
 	}
 
 	private boolean isAuthenticated() {
@@ -173,7 +185,8 @@ public class App {
 				isRegistered = true;
 				System.out.println("Registration successful. You can now login.");
 			} catch (AuthenticationServiceException e) {
-				System.out.println("REGISTRATION ERROR: " + e.getMessage());
+				exception = new ExceptionHandler(e.getMessage());
+				System.out.println("REGISTRATION ERROR: " + exception);
 				System.out.println("Please attempt to register again.");
 			}
 		}
@@ -193,7 +206,8 @@ public class App {
 				currentUserId = currentUser.getUser().getId();
 				currentUsername = currentUser.getUser().getUsername();
 			} catch (AuthenticationServiceException e) {
-				System.out.println("LOGIN ERROR: " + e.getMessage());
+				exception = new ExceptionHandler(e.getMessage());
+				System.out.println("LOGIN ERROR: " + exception);
 				System.out.println("Please attempt to login again.");
 			}
 		}

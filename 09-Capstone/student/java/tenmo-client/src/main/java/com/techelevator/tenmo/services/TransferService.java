@@ -29,16 +29,16 @@ public class TransferService {
 		if (toAccountUsername == null) { // if toAccountUsername is null, the user entered a zero and wants to cancel the transfer
 			return null;
 		}
-		while (true) {
+//		while (true) {
 			amount = getAmount();
 			Account account = tenmoService.listCurrentBalance(fromUser.getId());
-			if (amount.compareTo(account.getBalance()) > 0) {
-				System.out.println("Your requested transfer amount will overdraft your account. Please try again.");
-			}
-			else {
-				break;
-			}
-		}
+//			if (amount.compareTo(account.getBalance()) > 0) {
+//				System.out.println("Your requested transfer amount will overdraft your account. Please try again.");
+//			}
+//			else {
+//				break;
+//			}
+//		}
 		String status = "Approved";
 		String type = "Send";
 		Transfer transfer = new Transfer(0, type, status, fromAccountUsername, toAccountUsername, amount);

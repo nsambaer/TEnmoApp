@@ -33,7 +33,7 @@ public class TenmoService {
 		account = restTemplate.exchange(BASE_URL + "account/" + userId, HttpMethod.GET, makeAuthEntity(), Account.class)
 				.getBody();
 		} catch (RestClientResponseException ex) {
-			throw new TenmoServiceException(ex.getRawStatusCode() + ex.getResponseBodyAsString());
+			throw new TenmoServiceException(ex.getResponseBodyAsString());
 		}
 		return account;
 	}
@@ -44,7 +44,7 @@ public class TenmoService {
 		transferHistory = restTemplate.exchange(BASE_URL + "account/" + userId + "/transfers", HttpMethod.GET,
 				makeAuthEntity(), Transfer[].class).getBody();
 		} catch (RestClientResponseException ex) {
-			throw new TenmoServiceException(ex.getRawStatusCode() + ex.getResponseBodyAsString());
+			throw new TenmoServiceException(ex.getResponseBodyAsString());
 		}
 		return transferHistory;
 	}
@@ -54,7 +54,7 @@ public class TenmoService {
 		try {
 		users = restTemplate.exchange(BASE_URL + "users", HttpMethod.GET, makeAuthEntity(), User[].class).getBody();
 		} catch (RestClientResponseException ex) {
-			throw new TenmoServiceException(ex.getRawStatusCode() + ex.getResponseBodyAsString());
+			throw new TenmoServiceException(ex.getResponseBodyAsString());
 		}
 		List<User> userList = new ArrayList<>();
 		for (User u : users) {
@@ -67,7 +67,7 @@ public class TenmoService {
 		try {
 		transfer = restTemplate.postForObject(BASE_URL + "account/" + currentUserId + "/transfers", makeTransferEntity(transfer), Transfer.class);
 		} catch (RestClientResponseException ex) {
-			throw new TenmoServiceException(ex.getRawStatusCode() + ex.getResponseBodyAsString());
+			throw new TenmoServiceException(ex.getResponseBodyAsString());
 		}
 		return transfer;
 		
