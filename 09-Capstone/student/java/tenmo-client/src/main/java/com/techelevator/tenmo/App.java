@@ -224,16 +224,7 @@ public class App {
 				login();
 			} else if (LOGIN_MENU_OPTION_REGISTER.equals(choice)) {
 				register();
-			} else if (LOGIN_MENU_BACKDOOR.equals(choice)) {
-				UserCredentials credentials = new UserCredentials("testUser", "password");
-				try {
-					currentUser = authenticationService.login(credentials);
-					tenmoService.AUTH_TOKEN = currentUser.getToken();
-					currentUserId = currentUser.getUser().getId();
-					currentUsername = currentUser.getUser().getUsername();
-				} catch (Exception e) {
-				}
-			} else if (MENU_OPTION_EXIT.equals(choice)) {
+			} else {
 				// the only other option on the login menu is to exit
 				exitProgram();
 			}
