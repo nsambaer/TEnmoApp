@@ -54,6 +54,7 @@ public class Transfer {
 	}
 
 	//this returns a small overview to be used when displaying transaction history to a user
+	//String "format" variables are created and concatenated to "output" so all columns are aligned when printed
 	public String listOverview(String username) {
 		String output = "";
 		
@@ -92,16 +93,6 @@ public class Transfer {
 		
 		return output;
 		
-//		String output = transferId + "        ";
-//		if (username.equals(accountFrom)) { //checking to see if the user sent or received the transaction in order to show them the relevant to or from field
-//			output += "To: " + accountTo;
-//		} 
-//		else {
-//			output += "From: " + accountFrom;
-//		}
-//		output += "     ";
-//		output += "$" + amount;
-//		return output;
 	}
 	
 	@Override

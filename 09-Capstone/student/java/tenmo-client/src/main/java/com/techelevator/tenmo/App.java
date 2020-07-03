@@ -109,14 +109,14 @@ public class App {
 		if (transferHistory.length == 0) {
 			System.out.println("You have no previous transfers. Please select another option.");
 		} else {
-			System.out.println("------------------------------------------");
+			System.out.println("-------------------------------------------------");
 			System.out.println("Transfers");
 			System.out.printf("%-8s %-30s %-10s\n", "ID", "From/To", "Amount");
-			System.out.println("------------------------------------------");
+			System.out.println("-------------------------------------------------");
 			for (Transfer t : transferHistory) {
 				System.out.println(t.listOverview(currentUsername));
 			}
-			System.out.println("----------");
+			System.out.println("---------");
 			boolean correctChoice = false;
 			while (!correctChoice) {
 				int transferChoice = console
@@ -137,7 +137,6 @@ public class App {
 					System.out.println("Invalid transfer ID. Please enter a valid ID.");
 				}
 			}
-
 		}
 	}
 
@@ -147,6 +146,7 @@ public class App {
 		Transfer[] transferHistory = tenmoService.listTransferHistory(currentUserId);
 		List<Transfer> pendingTransfers = new ArrayList<>();
 
+		// retrieves all pending transfer requests and adds to a list
 		for (Transfer t : transferHistory) {
 			if (t.getAccountFrom().equals(currentUsername)) {
 				if (t.getTransferStatus().equals("Pending")) {
@@ -154,19 +154,21 @@ public class App {
 				}
 			}
 		}
-		System.out.println("------------------------------------------");
+
+		// prints all pending transfer requests
+		System.out.println("-------------------------------------------------");
 		System.out.println("Transfers");
-		System.out.printf("%-8s %-20s %-10s\n", "ID", "To", "Amount");
-		System.out.println("------------------------------------------");
+		System.out.printf("%-8s %-30s %-10s\n", "ID", "To", "Amount");
+		System.out.println("-------------------------------------------------");
 		for (Transfer t : pendingTransfers) {
 			System.out.println(t.listOverview(currentUsername));
 		}
-		System.out.println("----------");
+		System.out.println("---------");
 
+		// selects a transfer from the list presented and catches invalid entries
 		boolean correctChoice = false;
 		while (!correctChoice) {
-			int transferChoice = console
-					.getUserInputInteger("Please enter transfer ID to approve/reject (0 to cancel)");
+			int transferChoice = console.getUserInputInteger("Please enter transfer ID to approve/reject (0 to cancel)");
 			if (transferChoice == 0) {
 				return;
 			}
@@ -181,6 +183,7 @@ public class App {
 			}
 		}
 
+		// advances to Pending Option Menu to either approve or deny transfer request
 		String choice = (String) console.getChoiceFromOptions(PENDING_MENU_OPTIONS);
 		if (PENDING_MENU_OPTION_APPROVE.equals(choice)) {
 			sendTransfer = new Transfer(pendingTransfer.getTransferId(), pendingTransfer.getTransferType(), "Approved",
@@ -192,11 +195,11 @@ public class App {
 			return;
 		}
 
+		// updates transfer to reflect the menu option that was selected
 		tenmoService.updateTransfer(sendTransfer, currentUserId);
 	}
 
 	private void sendBucks() throws TenmoServiceException {
-
 		Transfer transfer = transferService.sendTransfer(currentUser.getUser());
 		if (transfer == null) {
 			return;
@@ -205,7 +208,6 @@ public class App {
 	}
 
 	private void requestBucks() throws TenmoServiceException {
-
 		Transfer transfer = transferService.requestTransfer(currentUser.getUser());
 		if (transfer == null) {
 			return;

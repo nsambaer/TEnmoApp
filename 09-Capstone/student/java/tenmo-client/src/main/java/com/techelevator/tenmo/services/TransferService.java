@@ -11,7 +11,7 @@ import com.techelevator.view.ConsoleService;
 
 public class TransferService {
 
-	//this class was created to 
+	//this class was created to manage all transfer-related methods
 	
 	private TenmoService tenmoService;
 	private ConsoleService console;
@@ -24,7 +24,7 @@ public class TransferService {
 	public Transfer sendTransfer(User fromUser) throws TenmoServiceException {
 		String fromAccountUsername = fromUser.getUsername();
 		BigDecimal amount;
-		String prompt = "Enter ID of user you are sending to (0 to cancel)";
+		String prompt = "\nEnter ID of user you are sending to (0 to cancel)";
 		String toAccountUsername = selectUser(fromUser.getId(), prompt);
 		if (toAccountUsername == null) { // if toAccountUsername is null, the user entered a zero and wants to cancel the transfer
 			return null;
@@ -48,7 +48,7 @@ public class TransferService {
 	public Transfer requestTransfer(User toUser) throws TenmoServiceException {
 		String toAccountUsername = toUser.getUsername();
 		BigDecimal amount;
-		String prompt = "Enter ID of user you are requesting from (0 to cancel)";
+		String prompt = "\nEnter ID of user you are requesting from (0 to cancel)";
 		String fromAccountUsername = selectUser(toUser.getId(), prompt);
 		if (fromAccountUsername == null) { // if toAccountUsername is null, the user entered a zero and wants to cancel the transfer
 			return null;
@@ -86,14 +86,14 @@ public class TransferService {
 
 		System.out.println("------------------------------------------");
 		System.out.println("Users");
-		System.out.println("ID        Name");
+		System.out.println("ID       Name");
 		System.out.println("------------------------------------------");
 		for (User u : userList) {
 			System.out.println(u);
 		}
 		while (true) {
 			int userId = console.getUserInputInteger(prompt);
-			//validation for 
+			//validation for invalid user ID entries such as negative value or value that does not exist
 			if (userId < 0) {
 				System.out.println("You have entered a negative number. Please try again.");
 			} else {
