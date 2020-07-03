@@ -14,7 +14,6 @@ import com.techelevator.tenmo.services.TenmoServiceException;
 import com.techelevator.tenmo.services.TransferService;
 import com.techelevator.view.ConsoleService;
 
-
 public class App {
 
 	private static final String API_BASE_URL = "http://localhost:8080/";
@@ -118,17 +117,27 @@ public class App {
 				System.out.println(t.listOverview(currentUsername));
 			}
 			System.out.println("----------");
-			int transferChoice = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel)");
-			if (transferChoice > 0) {
+			boolean correctChoice = false;
+			while (!correctChoice) {
+				int transferChoice = console
+						.getUserInputInteger("Please enter transfer ID to view details (0 to cancel)");
+				if (transferChoice == 0) {
+					return;
+				}
 				for (Transfer t : transferHistory) {
 					if (t.getTransferId() == transferChoice) {
 						System.out.println("------------------------------------------");
 						System.out.println("Transfer Details");
 						System.out.println("------------------------------------------");
 						System.out.println(t);
+						correctChoice = true;
 					}
 				}
+				if (!correctChoice) {
+					System.out.println("Invalid transfer ID. Please enter a valid ID.");
+				}
 			}
+
 		}
 	}
 
@@ -156,7 +165,8 @@ public class App {
 
 		boolean correctChoice = false;
 		while (!correctChoice) {
-			int transferChoice = console.getUserInputInteger("Please enter transfer ID to approve/reject (0 to cancel)");
+			int transferChoice = console
+					.getUserInputInteger("Please enter transfer ID to approve/reject (0 to cancel)");
 			if (transferChoice == 0) {
 				return;
 			}
