@@ -1,5 +1,8 @@
 package com.techelevator.tenmo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.techelevator.tenmo.models.AuthenticatedUser;
 import com.techelevator.tenmo.models.ExceptionHandler;
 import com.techelevator.tenmo.models.Transfer;
@@ -30,6 +33,11 @@ public class App {
 	private static final String[] MAIN_MENU_OPTIONS = { MAIN_MENU_OPTION_VIEW_BALANCE, MAIN_MENU_OPTION_SEND_BUCKS,
 			MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS, MAIN_MENU_OPTION_REQUEST_BUCKS,
 			MAIN_MENU_OPTION_VIEW_PENDING_REQUESTS, MAIN_MENU_OPTION_LOGIN, MENU_OPTION_EXIT };
+	private static final String PENDING_MENU_OPTION_APPROVE = "Approve";
+	private static final String PENDING_MENU_OPTION_REJECT = "Reject";
+	private static final String PENDING_MENU_OPTION_NO_APPROVE_REJECT = "Don't approve or reject";
+	private static final String[] PENDING_MENU_OPTIONS = { PENDING_MENU_OPTION_APPROVE, PENDING_MENU_OPTION_REJECT,
+			PENDING_MENU_OPTION_NO_APPROVE_REJECT };
 
 	private AuthenticatedUser currentUser;
 	private ConsoleService console;
@@ -103,7 +111,7 @@ public class App {
 		} else {
 			System.out.println("------------------------------------------");
 			System.out.println("Transfers");
-			System.out.printf("%-8s %-20s %-10s\n", "ID", "From/To", "Amount"); 
+			System.out.printf("%-8s %-20s %-10s\n", "ID", "From/To", "Amount");
 			System.out.println("------------------------------------------");
 			for (Transfer t : transferHistory) {
 				System.out.println(t.listOverview(currentUsername));
@@ -123,9 +131,55 @@ public class App {
 		}
 	}
 
-	private void viewPendingRequests() {
+	private void viewPendingRequests() throws TenmoServiceException {
+		Transfer pendingTransfer = new Transfer();
+		Transfer sendTransfer = new Transfer();
+		Transfer[] transferHistory = tenmoService.listTransferHistory(currentUserId);
+		List<Transfer> pendingTransfers = new ArrayList<>();
 
-		// not yet
+		for (Transfer t : transferHistory) {
+			if (t.getAccountTo().equals(currentUsername)) {
+				if (t.getTransferStatus().equals("Pending")) {
+					pendingTransfers.add(t);
+				}
+			}
+		}
+		System.out.println("------------------------------------------");
+		System.out.println("Transfers");
+		System.out.printf("%-8s %-20s %-10s\n", "ID", "To", "Amount");
+		System.out.println("------------------------------------------");
+		for (Transfer t : pendingTransfers) {
+			System.out.println(t.listOverview(currentUsername));
+		}
+		System.out.println("----------");
+
+		boolean correctChoice = false;
+		while (!correctChoice) {
+			int transferChoice = console.getUserInputInteger("Please enter transfer ID to approve/reject (0 to cancel)");
+			if (transferChoice == 0) {
+				return;
+			}
+			for (Transfer t : pendingTransfers) {
+				if (t.getTransferId() == transferChoice) {
+					pendingTransfer = t;
+					correctChoice = true;
+				}
+			}
+			System.out.println("Invalid transfer ID. Please enter a valid ID.");
+		}
+
+		String choice = (String) console.getChoiceFromOptions(PENDING_MENU_OPTIONS);
+		if (PENDING_MENU_OPTION_APPROVE.equals(choice)) {
+			sendTransfer = new Transfer(pendingTransfer.getTransferId(), pendingTransfer.getTransferType(), "Approved",
+					pendingTransfer.getAccountFrom(), pendingTransfer.getAccountTo(), pendingTransfer.getAmount());
+		} else if (PENDING_MENU_OPTION_REJECT.equals(choice)) {
+			sendTransfer = new Transfer(pendingTransfer.getTransferId(), pendingTransfer.getTransferType(), "Rejected",
+					pendingTransfer.getAccountFrom(), pendingTransfer.getAccountTo(), pendingTransfer.getAmount());
+		} else if (PENDING_MENU_OPTION_NO_APPROVE_REJECT.equals(choice)) {
+			return;
+		}
+
+		tenmoService.updateTransfer(sendTransfer, currentUserId);
 	}
 
 	private void sendBucks() throws TenmoServiceException {
@@ -137,9 +191,13 @@ public class App {
 		tenmoService.makeTransfer(transfer, currentUserId);
 	}
 
-	private void requestBucks() {
-		// TODO Auto-generated method stub
+	private void requestBucks() throws TenmoServiceException {
 
+		Transfer transfer = transferService.requestTransfer(currentUser.getUser());
+		if (transfer == null) {
+			return;
+		}
+		tenmoService.makeTransfer(transfer, currentUserId);
 	}
 
 	private void exitProgram() {
@@ -156,10 +214,10 @@ public class App {
 			} else if (LOGIN_MENU_BACKDOOR.equals(choice)) {
 				UserCredentials credentials = new UserCredentials("testUser", "password");
 				try {
-				currentUser = authenticationService.login(credentials);
-				tenmoService.AUTH_TOKEN = currentUser.getToken();
-				currentUserId = currentUser.getUser().getId();
-				currentUsername = currentUser.getUser().getUsername();
+					currentUser = authenticationService.login(credentials);
+					tenmoService.AUTH_TOKEN = currentUser.getToken();
+					currentUserId = currentUser.getUser().getId();
+					currentUsername = currentUser.getUser().getUsername();
 				} catch (Exception e) {
 				}
 			} else if (MENU_OPTION_EXIT.equals(choice)) {
