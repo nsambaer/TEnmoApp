@@ -64,25 +64,25 @@ public class App {
 
 	private void mainMenu() {
 		try {
-		while (true) {
-			String choice = (String) console.getChoiceFromOptions(MAIN_MENU_OPTIONS);
-			if (MAIN_MENU_OPTION_VIEW_BALANCE.equals(choice)) {
-				viewCurrentBalance();
-			} else if (MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS.equals(choice)) {
-				viewTransferHistory();
-			} else if (MAIN_MENU_OPTION_VIEW_PENDING_REQUESTS.equals(choice)) {
-				viewPendingRequests();
-			} else if (MAIN_MENU_OPTION_SEND_BUCKS.equals(choice)) {
-				sendBucks();
-			} else if (MAIN_MENU_OPTION_REQUEST_BUCKS.equals(choice)) {
-				requestBucks();
-			} else if (MAIN_MENU_OPTION_LOGIN.equals(choice)) {
-				login();
-			} else {
-				// the only other option on the main menu is to exit
-				exitProgram();
+			while (true) {
+				String choice = (String) console.getChoiceFromOptions(MAIN_MENU_OPTIONS);
+				if (MAIN_MENU_OPTION_VIEW_BALANCE.equals(choice)) {
+					viewCurrentBalance();
+				} else if (MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS.equals(choice)) {
+					viewTransferHistory();
+				} else if (MAIN_MENU_OPTION_VIEW_PENDING_REQUESTS.equals(choice)) {
+					viewPendingRequests();
+				} else if (MAIN_MENU_OPTION_SEND_BUCKS.equals(choice)) {
+					sendBucks();
+				} else if (MAIN_MENU_OPTION_REQUEST_BUCKS.equals(choice)) {
+					requestBucks();
+				} else if (MAIN_MENU_OPTION_LOGIN.equals(choice)) {
+					login();
+				} else {
+					// the only other option on the main menu is to exit
+					exitProgram();
+				}
 			}
-		}
 		} catch (TenmoServiceException ex) {
 			System.out.println(ex.getMessage());
 		}
@@ -96,25 +96,26 @@ public class App {
 
 	private void viewTransferHistory() throws TenmoServiceException {
 		Transfer[] transferHistory = tenmoService.listTransferHistory(currentUserId);
-		System.out.println("------------------------------------------");
-		System.out.println("Transfers");
-		System.out.println("ID        From/To                Amount");
-		System.out.println("------------------------------------------");
 		if (transferHistory.length == 0) {
-			System.out.println("You have no previous transfers.");
-		}
-		for (Transfer t : transferHistory) {
-			System.out.println(t.listOverview(currentUsername));
-		}
-		System.out.println("----------");
-		int transferChoice = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel)");
-		if (transferChoice > 0) {
+			System.out.println("You have no previous transfers. Please select another option.");
+		} else {
+			System.out.println("------------------------------------------");
+			System.out.println("Transfers");
+			System.out.println("ID        From/To                Amount");
+			System.out.println("------------------------------------------");
 			for (Transfer t : transferHistory) {
-				if (t.getTransferId() == transferChoice) {
-					System.out.println("------------------------------------------");
-					System.out.println("Transfer Details");
-					System.out.println("------------------------------------------");
-					System.out.println(t);
+				System.out.println(t.listOverview(currentUsername));
+			}
+			System.out.println("----------");
+			int transferChoice = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel)");
+			if (transferChoice > 0) {
+				for (Transfer t : transferHistory) {
+					if (t.getTransferId() == transferChoice) {
+						System.out.println("------------------------------------------");
+						System.out.println("Transfer Details");
+						System.out.println("------------------------------------------");
+						System.out.println(t);
+					}
 				}
 			}
 		}
@@ -126,7 +127,7 @@ public class App {
 	}
 
 	private void sendBucks() throws TenmoServiceException {
-		
+
 		Transfer transfer = transferService.sendTransfer(currentUser.getUser());
 		if (transfer == null) {
 			return;
@@ -187,7 +188,8 @@ public class App {
 			try {
 				currentUser = authenticationService.login(credentials);
 				tenmoService.AUTH_TOKEN = currentUser.getToken();
-				//storing the id and username as private variables to make it easier to call them later
+				// storing the id and username as private variables to make it easier to call
+				// them later
 				currentUserId = currentUser.getUser().getId();
 				currentUsername = currentUser.getUser().getUsername();
 			} catch (AuthenticationServiceException e) {
